@@ -364,6 +364,36 @@ class NetworkModule():
         self.update_parameters(gradient_step)
         return
 
+    #Quick utility function works for 1/-1 labels only
+    def trainTest(self,trainV,trainL,testV,testL,nbIter,gradient_step):
+        print("=======TRAIN ERROR=======")
+        for i in xrange(0,nbIter):
+            self.stochasticIter(trainV, trainL, gradient_step, verbose=False)
+            predicted = self.forwardAll(trainV)
+            ok=0
+            ko=0
+            for pred,exp in zip(predicted,trainL):
+                if pred[0]*exp[0] > 0:
+                    ok+=1
+                else:
+                    ko+=1
+
+            print ("%d correct (%f%%), %d incorrect (%f%%) " % (ok,ok/(ok+ko+0.0)*100,ko,ko/(ok+ko+0.0)*100))
+            print ("Learning done")
+                
+        print ("=======TEST ERROR=======")
+        predicted = self.forwardAll(testV)
+        
+        ok=0
+        ko=0
+        
+        for pred,exp in zip(predicted,testL):
+            if pred[0]*exp[0] > 0:
+                ok+=1
+            else:
+                ko+=1
+        print ("%d correct (%f%%), %d incorrect (%f%%) " % (ok,ok/(ok+ko+0.0)*100,ko,ko/(ok+ko+0.0)*100))
+
 
 #Horizontal Module Class
 class HorizontalModule():
